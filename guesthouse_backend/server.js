@@ -9,8 +9,12 @@ const bookingRoutes = require('./src/routes/bookingRoutes.js');
 
 const app = express();
 
+const webhookRoutes = require('./src/routes/webhookRoutes.js');
+app.use('/api/webhooks', webhookRoutes);
+
 // Database initialization
 connectDB();
+
 
 // Global Request Pipeline Middlewares
 app.use(cors());
