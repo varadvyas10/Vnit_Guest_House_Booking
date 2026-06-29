@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  --color-vnit-blue: #002147;  /* Deep VNIT Academic Blue */
+  --color-vnit-accent: #0070f3;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  margin: 0;
+  background-color: #f8fafc; /* Slate-50 tint */
+}
