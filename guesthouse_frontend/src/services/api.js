@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create a single, shared Axios instance pointing directly to your Node.js server
 const API = axios.create({
-    baseURL: 'http://localhost:3000/api', 
+    baseURL: 'https://vnit-guest-house-booking.onrender.com', 
 });
 
 // 💥 THE PRODUCTION BRIDGE MOVE: Automatic Token Injection Interceptor
