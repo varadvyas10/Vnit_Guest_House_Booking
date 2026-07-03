@@ -15,12 +15,12 @@ app.use('/api/webhooks', webhookRoutes);
 // Database initialization
 connectDB();
 
-
 // Inside your guesthouse_backend/server.js file
+const cors = require('cors');
 
 const allowedOrigins = [
     'http://localhost:5173',
-    'https://vnit-guest-house-booking-theta.vercel.app' //  Your exact live Vercel origin from the error log
+    'https://vnit-guest-house-booking-theta.vercel.app' //This is your exact live frontend link
 ];
 
 app.use(cors({
@@ -34,7 +34,7 @@ app.use(cors({
         }
         return callback(null, true);
     },
-    credentials: true, //  Critical for handling secure state cookies/JWTs
+    credentials: true, //  Required for handling secure cookies/JWTs
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
