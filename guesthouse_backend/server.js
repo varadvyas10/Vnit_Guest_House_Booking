@@ -16,8 +16,29 @@ app.use('/api/webhooks', webhookRoutes);
 connectDB();
 
 
-// Global Request Pipeline Middlewares
-app.use(cors());
+// Inside your guesthouse_backend/server.js file
+
+const allowedOrigins = [
+    'http://localhost:5173',
+    'https://vnit-guest-house-booking-theta.vercel.app' //  Your exact live Vercel origin from the error log
+];
+
+app.use(cors({
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps, curl, postman)
+        if (!origin) return callback(null, true);
+        
+        if (allowedOrigins.indexOf(origin) === -1) {
+            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
+    credentials: true, //  Critical for handling secure state cookies/JWTs
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
