@@ -90,4 +90,4 @@ const bookingSchema = new mongoose.Schema(
 
 bookingSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
-module.exports = mongoose.model("Booking", bookingSchema);
+module.exports = mongoose.models.Booking || mongoose.model('Booking', bookingSchema);
