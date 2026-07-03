@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@theme {
+@theme{
   --color-vnit-blue: #002147;  /* Deep VNIT Academic Blue */
   --color-vnit-accent: #0070f3;
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
