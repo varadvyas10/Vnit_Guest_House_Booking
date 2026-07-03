@@ -17,14 +17,13 @@ connectDB();
 
 
 app.use(cors({
-    origin: 'https://vnit-guest-house-booking-theta.vercel.app', // Explicit single origin string
-    credentials: true, // Required for withCredentials: true
+    origin: 'https://vnit-guest-house-booking-theta.vercel.app',
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204
 }));
-
-// Handle Preflight OPTIONS requests explicitly before any routes
-app.options('*', cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
