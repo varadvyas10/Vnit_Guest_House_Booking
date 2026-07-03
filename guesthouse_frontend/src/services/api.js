@@ -5,7 +5,7 @@ const API = axios.create({
     baseURL: 'https://vnit-guest-house-booking.onrender.com', 
 });
 
-// 💥 THE PRODUCTION BRIDGE MOVE: Automatic Token Injection Interceptor
+//  THE PRODUCTION BRIDGE MOVE: Automatic Token Injection Interceptor
 // Every single time your frontend calls the backend, this code intercepts it
 // and automatically injects the active user token into the request headers.
 API.interceptors.request.use((config) => {
