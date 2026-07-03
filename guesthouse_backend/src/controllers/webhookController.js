@@ -1,5 +1,5 @@
 const stripe = require('../config/stripe');
-const Booking = require('../models/Booking');
+const Booking = require('../models/booking');
 
 // @desc    Listen for real-time Stripe asynchronous payment events
 // @route   POST /api/webhooks/stripe

@@ -1,12 +1,18 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import Landing from './pages/Landing';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import StudentDashboard from './pages/StudentDashboard'; 
-import AdminDashboard from './pages/AdminDashboard';
-import ProtectedRoute from './components/ProtectedRoute';
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import Landing from "./pages/Landing";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import StudentDashboard from "./pages/StudentDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
+import BookingSuccess from "./pages/BookingSuccess";
 
 function App() {
   return (
@@ -19,23 +25,31 @@ function App() {
           <Route path="/register" element={<Register />} />
 
           {/*  Secure Student Operations Track */}
-          <Route 
-            path="/student-dashboard" 
+          <Route
+            path="/student-dashboard"
             element={
-              <ProtectedRoute allowedRoles={['student']}>
+              <ProtectedRoute allowedRoles={["student"]}>
                 <StudentDashboard />
               </ProtectedRoute>
-            } 
+            }
           />
 
           {/*  Secure Administration Operations Track */}
-          <Route 
-            path="/admin-dashboard" 
+          <Route
+            path="/admin-dashboard"
             element={
-              <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+              <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
                 <AdminDashboard />
               </ProtectedRoute>
-            } 
+            }
+          />
+          <Route
+            path="/booking/success"
+            element={
+              <ProtectedRoute allowedRoles={["student"]}>
+                <BookingSuccess />
+              </ProtectedRoute>
+            }
           />
 
           {/* Fallback Catch-All Redirection Guard */}
