@@ -16,28 +16,18 @@ app.use('/api/webhooks', webhookRoutes);
 connectDB();
 
 // Inside your guesthouse_backend/server.js file
+// Remove any other app.use(cors()) blocks and put this at the very top of server.js
 const cors = require('cors');
 
-const allowedOrigins = [
-    'http://localhost:5173',
-    'https://vnit-guest-house-booking-theta.vercel.app' //This is your exact live frontend link
-];
-
 app.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps, curl, postman)
-        if (!origin) return callback(null, true);
-        
-        if (allowedOrigins.indexOf(origin) === -1) {
-            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-            return callback(new Error(msg), false);
-        }
-        return callback(null, true);
-    },
-    credentials: true, //  Required for handling secure cookies/JWTs
+    origin: 'https://vnit-guest-house-booking-theta.vercel.app', // Explicit single origin string
+    credentials: true, // Required for withCredentials: true
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 }));
+
+// Handle Preflight OPTIONS requests explicitly before any routes
+app.options('*', cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
