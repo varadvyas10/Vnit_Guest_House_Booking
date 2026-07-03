@@ -15,9 +15,6 @@ app.use('/api/webhooks', webhookRoutes);
 // Database initialization
 connectDB();
 
-// Inside your guesthouse_backend/server.js file
-// Remove any other app.use(cors()) blocks and put this at the very top of server.js
-const cors = require('cors');
 
 app.use(cors({
     origin: 'https://vnit-guest-house-booking-theta.vercel.app', // Explicit single origin string
