@@ -8,9 +8,10 @@ export const bookingService = {
     },
 
     //  Fetch historical stay lists matching your new route configuration precisely
+    // guesthouse_frontend/src/services/bookingService.js
     getStudentBookings: async () => {
-        const response = await API.get('/bookings/my-reservations');
-        return response.data;
+    const response = await API.get('/bookings/my-reservations');
+    return response.data.reservations;
     },
 
     //  Submit a 1-5 star review rating map payload for an allocated checkout stay

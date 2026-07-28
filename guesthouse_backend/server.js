@@ -16,8 +16,23 @@ app.use('/api/webhooks', webhookRoutes);
 connectDB();
 
 
+const allowedOrigins = [
+    'https://vnit-guest-house-booking-theta.vercel.app',
+    'http://localhost:5173',
+];
+
 app.use(cors({
-    origin: 'https://vnit-guest-house-booking-theta.vercel.app',
+    origin: function (origin, callback) {
+        // allow non-browser requests (Postman, server-to-server, curl)
+        if (!origin) return callback(null, true);
+
+        const isAllowed =
+            allowedOrigins.includes(origin) ||
+            /^https:\/\/vnit-guest-house-booking(-[a-z0-9]+)*\.vercel\.app$/.test(origin);
+
+        if (isAllowed) return callback(null, true);
+        return callback(new Error('Not allowed by CORS'));
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],

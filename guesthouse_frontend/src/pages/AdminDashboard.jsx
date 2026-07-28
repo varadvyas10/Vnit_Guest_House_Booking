@@ -573,7 +573,7 @@ const AdminDashboard = () => {
                           </div>
                           <div className="text-[10px] text-slate-400">
                             {room?.floor} Floor •{" "}
-                            {room?.acEnabled ? "AC" : "Non-AC"}
+                            {room?.ac ? "AC" : "Non-AC"}
                           </div>
                         </div>
                         <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-emerald-600 transition-all" />
