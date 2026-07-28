@@ -9,22 +9,11 @@ const getLiveAvailability = async (req, res) => {
   try {
     const { startDate, endDate, roomType, acRequired } = req.query;
 
-    const isAcRequired = acRequired === true || acRequired === "true";
-
     // 1. Structural Parameter Check
-    if (
-      !guestName ||
-      !guestPhone ||
-      !roomType ||
-      acRequired === undefined ||
-      !startDate ||
-      !endDate
-    ) {
+    if (!roomType || acRequired === undefined || !startDate || !endDate) {
       return res
         .status(400)
-        .json({
-          message: "Missing mandatory timeframe or property preferences.",
-        });
+        .json({ message: "Missing mandatory timeframe or property preferences." });
     }
 
     // 2. Clear Date Bounds Check
@@ -34,10 +23,7 @@ const getLiveAvailability = async (req, res) => {
     if (checkIn >= checkOut) {
       return res
         .status(400)
-        .json({
-          message:
-            "Validation Error: Check-out date must succeed Check-in date.",
-        });
+        .json({ message: "Validation Error: Check-out date must succeed Check-in date." });
     }
 
     // 3. String-to-Boolean Casting for AC Flag
@@ -52,13 +38,10 @@ const getLiveAvailability = async (req, res) => {
     );
 
     // 5. Dynamic Estimated Price Engine Computation
-    // Calculate the difference in time, convert to total days/nights
     const timeDifference = checkOut.getTime() - checkIn.getTime();
     const totalNights = Math.ceil(timeDifference / (1000 * 3600 * 24));
 
     let estimatedTotalPrice = 0;
-
-    // Find a representative room from the matching pool to calculate the current night rate
     if (availabilityMetrics.availableRoomPool.length > 0) {
       const basePricePerNight = availabilityMetrics.availableRoomPool[0].price;
       estimatedTotalPrice = basePricePerNight * totalNights;
@@ -66,11 +49,7 @@ const getLiveAvailability = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      timeframe: {
-        nightsDetected: totalNights,
-        startDate,
-        endDate,
-      },
+      timeframe: { nightsDetected: totalNights, startDate, endDate },
       metrics: {
         totalRoomsInInventory: availabilityMetrics.totalInventory,
         currentlyBlockedOrLocked: availabilityMetrics.allocatedOrLocked,
@@ -82,10 +61,7 @@ const getLiveAvailability = async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({
-        error: "Availability Engine Query Defect",
-        details: error.message,
-      });
+      .json({ error: "Availability Engine Query Defect", details: error.message });
   }
 };
 
@@ -172,14 +148,14 @@ const initializeBookingHold = async (req, res) => {
       status: "pending_payment",
       expiresAt: lockExpirationWindow,
     });
-
+    const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
     // 6. Generate Stripe Secure Checkout Session Pipeline
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
       // Replace these with your actual local/production frontend success and cancel routing paths later
-      success_url: `http://localhost:5173/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `http://localhost:5173/booking/cancel`,
+      success_url: `${FRONTEND_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${FRONTEND_URL}/booking/cancel`,
       customer_email: req.user.email,
       client_reference_id: dynamicHoldBooking._id.toString(), // Crucial link node for the coming webhooks!
       line_items: [
@@ -487,6 +463,5 @@ module.exports = {
   confirmStripeSession,
   getAllBookings,
   rejectBookingWithReason,
-  toggleRoomMaintenance,
   submitStayReview
 };
