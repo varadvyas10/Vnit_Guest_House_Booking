@@ -9,8 +9,17 @@ const getLiveAvailability = async (req, res) => {
   try {
     const { startDate, endDate, roomType, acRequired } = req.query;
 
-    // 1. Structural Validation
-    if (!startDate || !endDate || !roomType || acRequired === undefined) {
+    const isAcRequired = acRequired === true || acRequired === "true";
+
+    // 1. Structural Parameter Check
+    if (
+      !guestName ||
+      !guestPhone ||
+      !roomType ||
+      acRequired === undefined ||
+      !startDate ||
+      !endDate
+    ) {
       return res
         .status(400)
         .json({
@@ -181,7 +190,7 @@ const initializeBookingHold = async (req, res) => {
               name: `VNIT Guest House: ${roomType} Room (${acRequired ? "AC" : "Non-AC"})`,
               description: `Stay Reservation across ${totalNights} Nights (${startDate} to ${endDate}) for Guest: ${guestName}`,
             },
-            unit_amount: computedTotalPrice * 100, // Stripe processes currency strictly in lowest denominations (Paise/Cents)
+            unit_amount: Math.round(computedTotalPrice * 100), // Stripe processes currency strictly in lowest denominations (Paise/Cents), // Stripe processes currency strictly in lowest denominations (Paise/Cents)
           },
           quantity: 1,
         },
@@ -276,10 +285,10 @@ const allocatePhysicalRoom = async (req, res) => {
       });
     }
 
-    const maxAdvanceDate = new Date();
+   const maxAdvanceDate = new Date();
     maxAdvanceDate.setDate(maxAdvanceDate.getDate() + 30); // 30 Days from today ceiling
 
-    if (checkIn > maxAdvanceDate) {
+    if (targetBooking.timeFrame.startDate > maxAdvanceDate) {
       return res.status(400).json({
         message:
           "Validation Failure: Advance room reservations are strictly capped to a maximum window of 30 days.",
@@ -315,7 +324,8 @@ const getStudentBookings = async (req, res) => {
       createdAt: -1,
     }); // Show newest reservations first
 
-    return res.status(200).json(reservations);
+   return res.status(200).json({ success: true, count: reservations.length, reservations });
+
   } catch (error) {
     res
       .status(500)
@@ -332,9 +342,16 @@ const confirmStripeSession = async (req, res) => {
   try {
     const { sessionId } = req.body;
 
+    if (!sessionId) {
+      return res
+        .status(400)
+        .json({ message: "Missing required Stripe session identifier." });
+    }
+
     const booking = await Booking.findOne({
       "financials.stripeSessionId": sessionId,
     });
+    
     if (!booking) {
       return res
         .status(404)
@@ -369,7 +386,7 @@ const getAllBookings = async (req, res) => {
       .populate("assignedRoomId", "roomNumber floor")
       .sort({ createdAt: -1 });
 
-    return res.status(200).json(masterList);
+      return res.status(200).json({ success: true, count: masterList.length, bookings: masterList });
   } catch (error) {
     res
       .status(500)
@@ -418,27 +435,6 @@ const rejectBookingWithReason = async (req, res) => {
       .status(500)
       .json({ error: "Rejection Mutation Defect", details: error.message });
   }
-};
-
-// @desc    Toggle a room asset between operational and maintenance modes
-// @route   PATCH /api/rooms/toggle-maintenance/:id
-const toggleRoomMaintenance = async (req, res) => {
-    try {
-        const room = await Room.findById(req.params.id);
-        if (!room) return res.status(404).json({ message: 'Target room asset not found.' });
-
-        // Flip status smoothly
-        room.status = room.status === 'maintenance' ? 'available' : 'maintenance';
-        await room.save();
-
-        return res.status(200).json({ 
-            success: true, 
-            message: `Room ${room.roomNumber} status successfully updated to ${room.status}.`, 
-            room 
-        });
-    } catch (error) {
-        res.status(500).json({ error: 'Maintenance write mutation failed', details: error.message });
-    }
 };
 
 // @desc    Submit a 1-5 star review for a completed checkout stay

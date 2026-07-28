@@ -18,10 +18,11 @@ const registerUser = async (req, res) => {
             return res.status(400).json({ message: 'Missing mandatory registration input fields.' });
         }
 
+        const sanitizedEmail = String(email).toLowerCase().trim();
         const sanitizedInstitutionId = String(institutionId).trim();
 
-        const existingEmail = await User.findOne({ email });
-        const existingId = await User.findOne({ institutionId: institutionId.trim() });
+        const existingEmail = await User.findOne({ email: sanitizedEmail });
+        const existingId = await User.findOne({ institutionId: sanitizedInstitutionId });
 
         if (existingEmail || existingId) {
             return res.status(400).json({ message: 'Account conflict: Email or Institution ID already mapped to active user profile.' });
@@ -33,10 +34,10 @@ const registerUser = async (req, res) => {
 
         const newUser = await User.create({
             name,
-            email,
+            email: sanitizedEmail,
             password: hashedPassword,
             role: role || 'student', 
-            institutionId: institutionId.trim(),
+            institutionId: sanitizedInstitutionId,
             department,
             phone
         });
@@ -63,7 +64,7 @@ const loginUser = async (req, res) => {
             return res.status(400).json({ message: 'Please provide both email and password keys.' });
         }
 
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email: email.toLowerCase().trim() });
         if (!user) {
             return res.status(401).json({ message: 'Invalid credentials. Profile not verified.' });
         }
