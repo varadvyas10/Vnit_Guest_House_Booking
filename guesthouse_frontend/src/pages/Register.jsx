@@ -19,7 +19,7 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [department, setDepartment] = useState("Computer Science");
+  const [department, setDepartment] = useState("Computer Science and Engineering (CSE)");
   const [institutionId, setInstitutionId] = useState("");
   const [phone, setPhone] = useState("");
 
