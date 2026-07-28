@@ -148,14 +148,15 @@ const initializeBookingHold = async (req, res) => {
       status: "pending_payment",
       expiresAt: lockExpirationWindow,
     });
-    const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
     // 6. Generate Stripe Secure Checkout Session Pipeline
+    const requestOrigin = req.headers.origin || process.env.FRONTEND_URL || 'http://localhost:5173';
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
       // Replace these with your actual local/production frontend success and cancel routing paths later
-      success_url: `${FRONTEND_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${FRONTEND_URL}/booking/cancel`,
+      success_url: `${requestOrigin}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${requestOrigin}/booking/cancel`,
       customer_email: req.user.email,
       client_reference_id: dynamicHoldBooking._id.toString(), // Crucial link node for the coming webhooks!
       line_items: [
